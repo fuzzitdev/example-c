@@ -1,0 +1,30 @@
+language: cpp
+dist: xenial
+compiler: clang
+
+stages:
+  - name: Fuzzing
+#    if: type = cron
+
+jobs:
+  include:
+    - stage: Fuzzing
+      name: Continuous Fuzzing via Fuzzit (fuzzing daily)
+      language: bash
+      compiler: clang
+      script:
+        - export CC=`which clang`
+        - export CXX=`which clang++`
+        - mkdir -p build
+        - cd build
+        - cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
+        - make
+        - wget -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v1.2.5/fuzzit_1.2.5_Linux_x86_64
+        - chmod a+x fuzzit
+        - ./fuzzit auth ${FUZZIT_AUTH_KEY}
+        - export TARGET_ID=Ba04ssna9qEd7bwN27Xz
+        - ./fuzzit create job --branch ${TRAVIS_BRANCH} --revision ${TRAVIS_COMMIT} ${TARGET_ID} ./fuzz/fuzz_test_string
+
+env:
+  global:
+    - secure: "fe2WaAiWImWDyRDUsnIgN5RJdCdmJFDVAzGwkxK46h/XR3735rESEgbeKDUIMFeEWTVfhXv/fDuRMabZCl9YGM02YFNnn2OW5MnJ6fWuaf5PJkJTJHjN3WOsll9ntviLaN/8W/+3jFrNeUGghvSGUEj+X68712+JjA+SGGtjHUDK1DfjfpIceYXzrv08BZwFIcQ09A4xsZURSE6re+5wnRH0X+9o7BzPyIGRQlPBxZb4iN+Rc7237WC47jvHXuB2DUvzH6DjVq85IHCiRN9hNEMEYWv54l2/o9Q32lVigwlsmzilHWgGC7d0C2d44kP6nyx3BNCzJGOZSBCGgkJfEFYqzDyTn5x5OGoNnc5NYZLPq2h0UtbS9Xm4bKHAMXfVo2jMc6Nc9Jgu028m3RDQFcayTghTsvjdpKZbvr1zI5Jp9E9EUBxXbKr99gglf6ego2oWwbb6aU6Fi0QZbvpbNaq8U5adu9yKIEY4GX0gF7YA8AkifuyaCNMCELyfiT2qIrKMyegN07P7TSrE9tFMk53Ac4C3dbUTVrxEjQIz4FfedxSt1CzwsGABDb6jUm4pxvfZfkXRgcuTds9OhS09ZvDUzhWa0pRPtSyD3IAp6xkK1a7CpPdTmdv+fHUCPbxJYhxt7EyStWV5garodRQGJysUh3xABJinAhfbbGoUHdk="
