@@ -2,28 +2,39 @@ language: cpp
 dist: xenial
 compiler: clang
 
+branches:
+  only:
+    - master
+
 stages:
   - name: Fuzzing
-#    if: type = cron
 
 jobs:
   include:
     - stage: Fuzzing
-      name: Continuous Fuzzing via Fuzzit (fuzzing daily)
+      name: Continuous Fuzzing via Fuzzit
       language: bash
       compiler: clang
       script:
-        - export CC=`which clang`
-        - export CXX=`which clang++`
-        - mkdir -p build
-        - cd build
-        - cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
-        - make
-        - wget -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v1.2.5/fuzzit_1.2.5_Linux_x86_64
-        - chmod a+x fuzzit
-        - ./fuzzit auth ${FUZZIT_AUTH_KEY}
-        - export TARGET_ID=Ba04ssna9qEd7bwN27Xz
-        - ./fuzzit create job --branch ${TRAVIS_BRANCH} --revision ${TRAVIS_COMMIT} ${TARGET_ID} ./fuzz/fuzz_test_string
+        - |
+          if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+            export FUZZING_TYPE="fuzzing"
+            export BRANCH=${TRAVIS_BRANCH}
+          else
+            export FUZZING_TYPE="sanity"
+            export BRANCH=${TRAVIS_PULL_REQUEST}
+          fi
+          export CC=`which clang`
+          export CXX=`which clang++`
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
+          make
+          wget -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v1.2.5/fuzzit_1.2.5_Linux_x86_64
+          chmod a+x fuzzit
+          ./fuzzit auth ${FUZZIT_AUTH_KEY}
+          export TARGET_ID=Ba04ssna9qEd7bwN27Xz
+          ./fuzzit create job --type ${FUZZING_TYPE} --branch ${BRANCH} --revision ${TRAVIS_COMMIT} ${TARGET_ID} ./fuzz/fuzz_test_string
 
 env:
   global:

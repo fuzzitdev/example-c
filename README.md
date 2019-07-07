@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/fuzzitdev/example.svg?branch=master)](https://travis-ci.org/fuzzitdev/example)
 ![fuzzit](https://app.fuzzit.dev/badge?org_id=hP8u8bNAda91Cnj0mKPX&branch=master)
 
 # Continuous Fuzzing Example
