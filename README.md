@@ -1,3 +1,5 @@
+![fuzzit](https://app.fuzzit.dev/badge?org_id=hP8u8bNAda91Cnj0mKPX&branch=master)
+
 # Continuous Fuzzing Example
 This is an example of a project with continuous fuzzing integration
 
@@ -8,12 +10,12 @@ for c/c++ project with cmake build system (though it can be used with any other 
 
 ## Prerequisite
 
-This tutorial was tested on Ubuntu 16/18 though it should work on Unix environment
+This tutorial was tested on Ubuntu 18 though it should work on Unix environment
 
 The required packages are cmake and clang > 6.0
 
 ```bash
-
+apt update && apt install -y git clang cmake 
 ```
 
 ## Getting the code
@@ -25,8 +27,12 @@ git clone https://github.com/fuzzitdev/continuous-fuzzing-example
 ## Compiling
 
 ```bash
+# you might need to export CXX=<path_to_clang++> CC=<path_to_clang>
+
 cd continuous-fuzzing-example
 mkdir build
+export CC=`which clang`
+export CXX=`which clang++`
 cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
 make
 ```
@@ -165,4 +171,12 @@ Because it's a very simple code libFuzzer under <1 sec (Though in complicated co
  
  In this short tutorial we will use travis (See links to other oss integration for more examples)
  
+ ## More Examples
  
+ You can look in the following open-source examples integrating fuzzit with different CI and different
+ build systemd
+ 
+ * systemd - [travis](https://github.com/systemd/systemd/blob/master/.travis.yml), 
+             [case-study](https://fuzzit.dev/2019/06/20/continuous-fuzzing-systemd-case-study/).
+ * radare2 - [travis](https://github.com/radare/radare2/blob/master/.travis.yml)
+ * pdfgen -  [circle](https://github.com/AndreRenaud/PDFGen/blob/master/.circleci/config.yml)

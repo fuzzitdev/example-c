@@ -1,4 +1,4 @@
-add_library( libteststring OBJECT
+add_library( libteststring STATIC
         test_string.cpp test_string.h)
 
 add_executable(test_string main.cpp)
