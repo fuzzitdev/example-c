@@ -12,7 +12,7 @@ int test_string(const char *src, size_t len)
     } else {
         if (strncmp(src, FLAG, strlen(FLAG)) == 0) {
             // TRIGGER HEAP OVERFLOW READ
-            if (src[len-1] == 0) {
+            if (src[len] == 0) {
                 return -2;
             }
             return -1;
