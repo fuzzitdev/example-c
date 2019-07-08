@@ -4,6 +4,8 @@
 # Continuous Fuzzing Example
 This is an example of a project with continuous fuzzing integration
 
+[![Fuzzit Introduction](https://img.youtube.com/vi/Va7rfTTPiNo/maxresdefault.jpg)](https://www.youtube.com/watch?v=Va7rfTTPiNo)
+
 ## Introduction
 
 In this tutorial will walk through how to setup fuzzing and then continuous fuzzing
