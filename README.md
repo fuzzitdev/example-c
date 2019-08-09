@@ -8,12 +8,12 @@ This is an example of a project with continuous fuzzing integration
 
 ## Introduction
 
-In this tutorial will walk through how to setup fuzzing and then continuous fuzzing
-for c/c++ project with cmake build system (though it can be used with any other build system as well)
+In this tutorial We'll walk through how to setup fuzzing and continuous fuzzing
+for c/c++ project with the cmake build system (although it can be used with any other build system).
 
 ## Prerequisite
 
-This tutorial was tested on Ubuntu 18 though it should work on Unix environment
+This tutorial was tested on Ubuntu 18, though it should work on any Unix environment.
 
 The required packages are cmake and clang > 6.0
 
@@ -41,9 +41,9 @@ make
 ```
 
 ## Understanding the code
-This code consist of library and a command line program.
+This code consist of a library and a command line program.
 
-The code is a dummy code (just for the sake of the example).
+The code is a dummy code (just for the sake of the example)
 that trigger an heap out-of-bound access when it is passed the correct
 "secret" flag.
 
@@ -67,7 +67,7 @@ int test_string(const char *src, size_t len)
 }
 ```
 
-when the secret flag is passed then the code is accessing an off-by-one in the `src`
+when the secret flag is passed, the code accesses an off-by-one in the `src`
 array.
 
 ## Fuzzing
@@ -78,8 +78,8 @@ flag and trigger the bug.
 ./fuzz/fuzz_test_string -exact_artifact_path=crash
 ```
 
-Because it's a very simple code libFuzzer under <1 sec (Though in complicated code libFuzzer sometimes find complicated
- bugs quickly like heartbleed and others...)
+Because it's a very simple code libFuzzer takes under 1 second (Although even in complex code, libFuzzer can sometimes find complicated
+ bugs quickly, such as Heartbleed).
  
  The output should look something like this:
  ```text
@@ -156,7 +156,7 @@ Because it's a very simple code libFuzzer under <1 sec (Though in complicated co
  ```
  
  We can see clearly the heap-buffer-overflow READ 1 byte memory bug and the exact line
- that triggeres. we also see the data that triggered the bug which is `FUZZING IS IMPORTANT`.
+ that triggers it. We also see the data that triggered the bug, which is `FUZZING IS IMPORTANT`.
  
  The data is also saved to `./crash` and we can double test it with the main command line
  ```bash
@@ -168,16 +168,16 @@ Because it's a very simple code libFuzzer under <1 sec (Though in complicated co
  
  ## Continuous Fuzzing
  
- Fuzzit can be integrated to any CI as it's just involves additional step
- of compiling the fuzzers in your current CI just like you compile the tests and pushing
+ Fuzzit can be integrated to any CI. Add additional steps
+ for compiling the fuzzers in your current CI (just like when compiling you tests) and for pushing
  the fuzzer binaries to fuzzit via fuzzit CLI.
  
  In this short tutorial we will use travis (See links to other oss integration for more examples)
  
  ## More Examples
  
- You can look in the following open-source examples integrating fuzzit with different CI and different
- build systemd
+ You can look in the following open-source examples integrating fuzzit with different CIs and different
+ build systems:
  
  * systemd - [travis](https://github.com/systemd/systemd/blob/master/.travis.yml), 
              [case-study](https://fuzzit.dev/2019/06/20/continuous-fuzzing-systemd-case-study/).
