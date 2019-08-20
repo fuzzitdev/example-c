@@ -1,17 +1,27 @@
 [![Build Status](https://travis-ci.org/fuzzitdev/example.svg?branch=master)](https://travis-ci.org/fuzzitdev/example)
-![fuzzit](https://app.fuzzit.dev/badge?org_id=hP8u8bNAda91Cnj0mKPX&branch=master)
+![fuzzit](https://app.fuzzit.dev/badge?org_id=fuzzitdev&branch=master)
 
-# Continuous Fuzzing Example
-This is an example of a project with continuous fuzzing integration
+# Continuous Fuzzing for C/C++ Example
 
-[![Fuzzit Introduction](https://img.youtube.com/vi/Va7rfTTPiNo/maxresdefault.jpg)](https://www.youtube.com/watch?v=Va7rfTTPiNo)
+This is an example of how to integrate your [libfuzzer](https://llvm.org/docs/LibFuzzer.html) targets with the
+[Fuzzit](https://fuzzit.dev) Continuous Fuzzing Platform.
 
-## Introduction
+This example will show the following steps:
+* [Building and running a simple libFuzzer target locally](#building-libfuzzer-target)
+* [Integrate the libFuzzer target with Fuzzit via Travis-CI](#integrating-with-fuzzit-from-ci)
 
-In this tutorial We'll walk through how to setup fuzzing and continuous fuzzing
-for c/c++ project with the cmake build system (although it can be used with any other build system).
+Result:
+* Fuzzit will run the fuzz targets continuously on a daily basis with the latest release.
+* Fuzzit will run regression tests on every pull-request with the generated corpus and crashes to catch bugs early on.
 
-## Prerequisite
+Fuzzing for C/C++ can help find both complex bugs, as well as critical security bugs as both c/c++ are unsafe languages.
+
+This tutorial focuses less on how to build libFuzzer targets and more on how to integrate the targets with Fuzzit. A lot of 
+great information is available at the [libFuzzer](https://llvm.org/docs/LibFuzzer.html) tutorial.
+
+## Building libFuzzer Target
+
+### Prerequisite
 
 This tutorial was tested on Ubuntu 18, though it should work on any Unix environment.
 
@@ -21,13 +31,13 @@ The required packages are cmake and clang > 6.0
 apt update && apt install -y git clang cmake 
 ```
 
-## Getting the code
+### Getting the code
 
 ```bash
 git clone https://github.com/fuzzitdev/continuous-fuzzing-example
 ```
 
-## Compiling
+### Compiling
 
 ```bash
 # you might need to export CXX=<path_to_clang++> CC=<path_to_clang>
@@ -40,7 +50,7 @@ cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
 make
 ```
 
-## Understanding the code
+### Understanding the code
 This code consist of a library and a command line program.
 
 The code is a dummy code (just for the sake of the example)
@@ -71,7 +81,7 @@ when the secret flag is passed, the code accesses an off-by-one in the `src`
 array.
 
 ## Fuzzing
-we will use the libFuzzer fuzzer located under `fuzz/` to find the "secret" 
+we will use the libFuzzer binary located under `fuzz/` to find the "secret" 
 flag and trigger the bug.
 
 ```bash
@@ -166,17 +176,49 @@ Because it's a very simple code libFuzzer takes under 1 second (Although even in
  # you got it:)
  ```
  
- ## Continuous Fuzzing
+ ## Integrating with Fuzzit from CI
  
- Fuzzit can be integrated to any CI. Add additional steps
- for compiling the fuzzers in your current CI (just like when compiling you tests) and for pushing
- the fuzzer binaries to fuzzit via fuzzit CLI.
+ The best way to integrate with Fuzzit is by adding a two stages in your Continuous Build system
+ (like Travis CI or Circle CI).
  
- In this short tutorial we will use travis (See links to other oss integration for more examples)
+ Fuzzing stage:
+ 
+ * Build a fuzzing target
+ * Download `fuzzit` cli
+ * Authenticate via passing `FUZZIT_API_KEY` environment variable
+ * Create a fuzzing job by uploading the fuzzing target
+ 
+ Regression stage
+ * Build a fuzzing target
+ * Download `fuzzit` cli
+ * Authenticate via passing `FUZZIT_API_KEY` environment variable OR defining the corpus as public. This way
+ No authentication would be require and regression can be used for [forked PRs](https://docs.travis-ci.com/user/pull-requests#pull-requests-and-security-restrictions) as well
+ * Create a local regression fuzzing job - This will pull all the generated corpuses and run them through
+ the fuzzing binary. If new bugs are introduced this will fail the CI and alert
+ 
+ Here is the relevant snippet from the [fuzzit.sh](https://github.com/fuzzitdev/example-c/blob/master/fuzzit.sh)
+ which is being run by [.travis.yml](https://github.com/fuzzitdev/example-c/blob/master/.travis.yml)
+ 
+ ```bash
+## Install fuzzit specific version for production or latest version for development :
+# https://github.com/fuzzitdev/fuzzit/releases/latest/download/fuzzit_Linux_x86_64
+wget -q -O fuzzit https://github.com/fuzzitdev/fuzzit/releases/download/v2.4.29/fuzzit_Linux_x86_64
+chmod a+x fuzzit
+
+## upload fuzz target for long fuzz testing on fuzzit.dev server or run locally for regression
+./fuzzit create job --type ${FUZZING_TYPE} fuzzitdev/fuzz-test-string ./fuzz/fuzz_test_string
+ ``` 
+ 
+ In production it is advised to download a pinned version of the [CLI](https://github.com/fuzzitdev/fuzzit)
+ like in the example. In development you can use the latest version:
+ https://github.com/fuzzitdev/fuzzit/releases/latest/download/fuzzit_${OS}_${ARCH}.
+ Valid values for `${OS}` are: `Linux`, `Darwin`, `Windows`.
+ Valid values for `${ARCH}` are: `x86_64` and `i386`.
+ 
  
  ## More Examples
  
- You can look in the following open-source examples integrating fuzzit with different CIs and different
+ You can look in the following open-source examples integrating Fuzzit with different CIs and different
  build systems:
  
  * systemd - [travis](https://github.com/systemd/systemd/blob/master/.travis.yml), 
