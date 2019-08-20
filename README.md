@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fuzzitdev/example.svg?branch=master)](https://travis-ci.org/fuzzitdev/example)
+[![Build Status](https://travis-ci.org/fuzzitdev/example-c.svg?branch=master)](https://travis-ci.org/fuzzitdev/example)
 ![fuzzit](https://app.fuzzit.dev/badge?org_id=fuzzitdev&branch=master)
 
 # Continuous Fuzzing for C/C++ Example
