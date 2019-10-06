@@ -43,7 +43,7 @@ git clone https://github.com/fuzzitdev/continuous-fuzzing-example
 # you might need to export CXX=<path_to_clang++> CC=<path_to_clang>
 
 cd continuous-fuzzing-example
-mkdir build
+mkdir build && cd build
 export CC=`which clang`
 export CXX=`which clang++`
 cmake .. -DCMAKE_BUILD_TYPE=AddressSanitizer
