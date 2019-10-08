@@ -34,7 +34,7 @@ apt update && apt install -y git clang cmake
 ### Getting the code
 
 ```bash
-git clone https://github.com/fuzzitdev/continuous-fuzzing-example
+git clone https://github.com/fuzzitdev/example-c
 ```
 
 ### Compiling
