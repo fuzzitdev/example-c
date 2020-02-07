@@ -42,7 +42,7 @@ git clone https://github.com/fuzzitdev/example-c
 ```bash
 # you might need to export CXX=<path_to_clang++> CC=<path_to_clang>
 
-cd continuous-fuzzing-example
+cd example-c
 mkdir build && cd build
 export CC=`which clang`
 export CXX=`which clang++`
